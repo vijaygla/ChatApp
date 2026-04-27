@@ -1,41 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "system-ui", "sans-serif";
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  /* Force light mode behavior to ensure consistent visibility across systems */
+  color-scheme: light;
+  background-color: #f9fafb;
+  color: #111827;
+}
 
 body {
-    /* background: url(../public/bg.jpg); */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace;
-}
-
-
+/* Custom scrollbar for chat */
 ::-webkit-scrollbar {
-    /* Customize the scrollbar width */
-    width: 6px;
+  width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-    /* Customize the scrollbar track */
-    background-color: aliceblue;
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-    /* Customize the scrollbar thumb */
-    background: #1b1b1b;
-    border-radius: 10px;
+  background: #d1d5db;
+  border-radius: 10px;
 }
-
-
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

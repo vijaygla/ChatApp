@@ -1,5 +1,5 @@
-@userHost = http://localhost:9000/api/v1/user
-@messageHost = http://localhost:9000/api/v1/message
+@userHost = http://localhost:8000/api/v1/user
+@messageHost = http://localhost:8000/api/v1/message
 
 ### user register
 
@@ -78,7 +78,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:9000/api/v1/message/send/683b2c0c486b6aa6c6ae6c92
+POST http://localhost:8000/api/v1/message/send/683b2c0c486b6aa6c6ae6c92
 Content-Type: application/json
 
 {
@@ -89,5 +89,4 @@ Content-Type: application/json
 
 GET {{messageHost}}/683798f90d94bec52a529e4d
 
-
-###
+### 

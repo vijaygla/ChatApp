@@ -1,4 +1,5 @@
 import { User } from "../models/userModel.js";
+import { Conversation } from "../models/conversationModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -90,6 +91,65 @@ export const getOtherUsers = async (req, res) => {
         return res.status(200).json(otherUsers);
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const getSidebarChats = async (req, res) => {
+    try {
+        const loggedInUserId = req.id;
+        
+        // 1. Get all other users
+        const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+        
+        // 2. For each user, find the last message in their conversation with the logged-in user
+        const chatsWithLastMessage = await Promise.all(otherUsers.map(async (user) => {
+            const conversation = await Conversation.findOne({
+                participants: { $all: [loggedInUserId, user._id], $size: 2 },
+                isGroup: false
+            }).populate({
+                path: "messages",
+                options: { sort: { createdAt: -1 }, limit: 1 }
+            });
+
+            return {
+                ...user._doc,
+                lastMessage: conversation?.messages[0] || null
+            };
+        }));
+        
+        // 3. Get all group conversations user is part of
+        const groups = await Conversation.find({
+            participants: { $in: [loggedInUserId] },
+            isGroup: true
+        }).populate("participants", "-password")
+          .populate({
+            path: "messages",
+            options: { sort: { createdAt: -1 }, limit: 1 }
+          });
+
+        const formattedGroups = groups.map(group => ({
+            _id: group._id,
+            fullName: group.groupName,
+            profilePhoto: "https://cdn-icons-png.flaticon.com/512/166/166258.png",
+            isGroup: true,
+            participants: group.participants,
+            lastMessage: group.messages[0] || null
+        }));
+
+        // Combine them
+        const allChats = [...chatsWithLastMessage, ...formattedGroups];
+        
+        // Sort all chats by last message time if available
+        allChats.sort((a, b) => {
+            const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt) : new Date(0);
+            const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt) : new Date(0);
+            return timeB - timeA;
+        });
+
+        return res.status(200).json(allChats);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 }
 
